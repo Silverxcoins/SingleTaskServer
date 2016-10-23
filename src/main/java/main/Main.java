@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
 
 @SuppressWarnings("OverlyBroadThrowsClause")
 public class Main {
-    private static final int PORT = 80;
+    private static final int PORT = 8081;
 
     @SuppressWarnings("PublicField")
     public static DataSource connection;
@@ -21,7 +21,7 @@ public class Main {
         final Connector connector = new Connector();
         connection = connector.createSource();
 
-        final InetSocketAddress address = new InetSocketAddress("0.0.0.0", PORT);
+        final InetSocketAddress address = new InetSocketAddress("127.0.0.1", PORT);
         final Server server = new Server(address);
         final ServletContextHandler contextHandler = new ServletContextHandler(server, "/singletask/api/", ServletContextHandler.SESSIONS);
 

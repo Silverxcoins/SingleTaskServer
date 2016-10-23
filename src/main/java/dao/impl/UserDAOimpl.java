@@ -93,7 +93,7 @@ public class UserDAOimpl implements UserDAO {
             stmt.setString(2, password);
             final ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
-                String token = resultSet.getString(1);
+                final String token = resultSet.getString(1);
                 stmt.close();
                 return new HttpResponse(token);
             }else {
