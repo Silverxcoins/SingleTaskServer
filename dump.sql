@@ -29,12 +29,9 @@ CREATE TABLE `Category` (
   `name` varchar(50) NOT NULL,
   `parent` int(11) DEFAULT NULL,
   `user` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `category_user_idx` (`user`),
-  KEY `category_parent_idx` (`parent`),
-  CONSTRAINT `category_parent` FOREIGN KEY (`parent`) REFERENCES `Category` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `category_user` FOREIGN KEY (`user`) REFERENCES `User` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+  `updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,12 +46,11 @@ CREATE TABLE `Task` (
   `name` varchar(50) NOT NULL,
   `comment` varchar(100) DEFAULT NULL,
   `date` date DEFAULT NULL,
+  `updated` datetime DEFAULT NULL,
   `time` int(11) NOT NULL,
   `user` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `task_user_idx` (`user`),
-  CONSTRAINT `task_user` FOREIGN KEY (`user`) REFERENCES `User` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,11 +62,7 @@ DROP TABLE IF EXISTS `TaskVariant`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `TaskVariant` (
   `task` int(11) NOT NULL,
-  `variant` int(11) NOT NULL,
-  KEY `taskvariant_task_idx` (`task`),
-  KEY `taskvariant_category_idx` (`variant`),
-  CONSTRAINT `taskvariant_category` FOREIGN KEY (`variant`) REFERENCES `Variant` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `taskvariant_task` FOREIGN KEY (`task`) REFERENCES `Task` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `variant` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -103,9 +95,8 @@ CREATE TABLE `Variant` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `category` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `variant_category_idx` (`category`),
-  CONSTRAINT `variant_category` FOREIGN KEY (`category`) REFERENCES `Category` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `updated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -118,4 +109,4 @@ CREATE TABLE `Variant` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-10-23 23:56:01
+-- Dump completed on 2016-10-26  0:29:43
