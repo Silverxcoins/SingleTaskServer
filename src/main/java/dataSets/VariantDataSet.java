@@ -4,26 +4,21 @@ import org.codehaus.jackson.JsonNode;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class VariantDataSet {
-    private int id;
+    private Integer id;
     private String name;
     private int category;
-    private List<Integer> tasks;
+    private boolean isDeleted;
 
     public VariantDataSet(JsonNode json) {
         if (json.has("id")) this.id = json.get("id").getIntValue();
         this.name = json.get("name").getTextValue();
         this.category = json.get("category").getIntValue();
-        if (json.has("tasks")) {
-            final String[] tasksStringArray = json.get("tasks").getTextValue().split(",");
-            tasks = new ArrayList<>();
-            for (String task : tasksStringArray) {
-                tasks.add(Integer.parseInt(task));
-            }
-        }
+        if (json.has("isDeleted")) this.isDeleted = json.get("isDeleted").getBooleanValue();
     }
 
     public VariantDataSet(ResultSet resultSet) throws SQLException {
@@ -32,20 +27,8 @@ public class VariantDataSet {
         this.category = resultSet.getInt("category");
     }
 
-    public List<Integer> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Integer> tasks) {
-        this.tasks = tasks;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -63,4 +46,17 @@ public class VariantDataSet {
     public void setCategory(int category) {
         this.category = category;
     }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
+

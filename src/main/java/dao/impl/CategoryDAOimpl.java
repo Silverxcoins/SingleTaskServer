@@ -24,98 +24,36 @@ public class CategoryDAOimpl implements CategoryDAO {
     }
 
     @Override
-    public HttpResponse addCategory(String jsonString) {
-        final JsonNode json;
+    public HttpResponse syncCategories(String jsonString) {
+        final JsonNode[] nodes;
         try {
-            json = mapper.readValue(jsonString, JsonNode.class);
+            nodes = mapper.readValue(jsonString, JsonNode[].class);
         } catch (IOException e) {
             return new HttpResponse(HttpResponse.INVALID_REQUEST);
         }
 
-        final CategoryDataSet category;
-        try {
-            category = new CategoryDataSet(json);
-        } catch (Exception e) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-
         try (Connection connection = Main.connection.getConnection()) {
-            final PreparedStatement stmt = connection.prepareStatement(SQLHelper.CATEGORY_INSERT);
-            stmt.setString(1, category.getName());
-            stmt.setObject(2, null);
-            stmt.setInt(3, category.getUser());
-            stmt.execute();
-
-            final ResultSet generatedKeys = stmt.getGeneratedKeys();
-            generatedKeys.next();
-
-            return new HttpResponse(new Integer(generatedKeys.getInt(1)));
-        } catch (SQLException e) {
-            return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
-        }
-    }
-
-    @Override
-    public HttpResponse deleteCategory(String jsonString) {
-        final JsonNode json;
-        try {
-            json = mapper.readValue(jsonString, JsonNode.class);
-        } catch (IOException e) {
-            return new HttpResponse(HttpResponse.INVALID_REQUEST);
-        }
-
-        if (!json.has("id")) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-        final int id = json.get("id").getIntValue();
-
-        return deleteCategory(id);
-    }
-
-    private HttpResponse deleteCategory(int id) {
-        try (Connection connection = Main.connection.getConnection()) {
-            PreparedStatement stmt = connection.prepareStatement(SQLHelper.CATEGORY_DELETE);
-            stmt.setInt(1, id);
-            stmt.execute();
-
-            stmt = connection.prepareStatement(SQLHelper.CATEGORY_SELECT_CHILDS);
-            stmt.setInt(1, id);
-            final ResultSet childs = stmt.executeQuery();
-            while (childs.next()) {
-                final int childId = childs.getInt(1);
-                deleteCategory(childId);
+            for (JsonNode node : nodes) {
+                CategoryDataSet clientCategory = new CategoryDataSet(node);
+                if (clientCategory.getId() == null) {
+                    if (!clientCategory.isDeleted()) {
+                        addCategory(connection, clientCategory);
+                    }
+                    continue;
+                }
+                CategoryDataSet serverCategory = getCategory(connection, clientCategory.getId());
+                if (serverCategory == null) {
+                    continue;
+                }
+                if (clientCategory.getUpdated().after(serverCategory.getUpdated())) {
+                    if (clientCategory.isDeleted()) {
+                        System.out.println(clientCategory.isDeleted());
+                        deleteCategory(connection, serverCategory.getId());
+                    } else if (clientCategory.isUpdated()) {
+                        updateCategory(connection, clientCategory);
+                    }
+                }
             }
-            stmt.close();
-
-            return new HttpResponse(HttpResponse.OK);
-        } catch (SQLException e) {
-            return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
-        }
-    }
-
-    @Override
-    public HttpResponse updateCategory(String jsonString) {
-        final JsonNode json;
-        try {
-            json = mapper.readValue(jsonString, JsonNode.class);
-        } catch (IOException e) {
-            return new HttpResponse(HttpResponse.INVALID_REQUEST);
-        }
-
-        final CategoryDataSet category;
-        try {
-            category = new CategoryDataSet(json);
-        } catch (Exception e) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-
-        try (Connection connection = Main.connection.getConnection()) {
-            final PreparedStatement stmt = connection.prepareStatement(SQLHelper.CATEGORY_UPDATE);
-            stmt.setString(1, category.getName());
-            stmt.setInt(2, category.getParent());
-            stmt.setInt(3, category.getUser());
-            stmt.setInt(4, category.getId());
-            stmt.execute();
 
             return new HttpResponse(HttpResponse.OK);
         } catch (SQLException e) {
@@ -139,6 +77,73 @@ public class CategoryDAOimpl implements CategoryDAO {
             return new HttpResponse(categories);
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
+        }
+    }
+
+    public int addCategory(Connection connection, CategoryDataSet category) throws SQLException{
+        System.out.println("add category");
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.CATEGORY_INSERT);
+        stmt.setString(1, category.getName());
+        stmt.setInt(2, category.getParent());
+        stmt.setInt(3, category.getUser());
+        stmt.setObject(4, category.getUpdated());
+        System.out.println(stmt.toString());
+        stmt.execute();
+
+        final ResultSet generatedKeys = stmt.getGeneratedKeys();
+        generatedKeys.next();
+        final int categoryId = generatedKeys.getInt(1);
+
+        stmt.close();
+        return categoryId;
+    }
+
+    public void deleteCategory(Connection connection, int id) throws SQLException {
+        System.out.println("delete category");
+        PreparedStatement stmt = connection.prepareStatement(SQLHelper.CATEGORY_DELETE);
+        stmt.setInt(1, id);
+        System.out.println(stmt.toString());
+        stmt.execute();
+
+        stmt = connection.prepareStatement(SQLHelper.CATEGORY_SELECT_CHILDS);
+        stmt.setInt(1, id);
+        final ResultSet childs = stmt.executeQuery();
+        while (childs.next()) {
+            final int childId = childs.getInt(1);
+            deleteCategory(connection, childId);
+        }
+
+        stmt = connection.prepareStatement(SQLHelper.VARIANT_DELETE_BY_CATEGORY);
+        stmt.setInt(1, id);
+        stmt.execute();
+
+        stmt.close();
+    }
+
+    public void updateCategory(Connection connection, CategoryDataSet category) throws SQLException {
+        System.out.println("update category");
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.CATEGORY_UPDATE);
+        stmt.setString(1, category.getName());
+        stmt.setInt(2, category.getParent());
+        stmt.setInt(3, category.getUser());
+        stmt.setObject(4, category.getUpdated());
+        stmt.setInt(5, category.getId());
+        stmt.execute();
+
+        stmt.close();
+    }
+
+    public CategoryDataSet getCategory(Connection connection, int id) throws SQLException {
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.GET_CATEGORY);
+        stmt.setInt(1,id);
+        ResultSet resultSet = stmt.executeQuery();
+        if (resultSet.next()) {
+            CategoryDataSet category = new CategoryDataSet(resultSet);
+            stmt.close();
+            return category;
+        } else {
+            stmt.close();
+            return null;
         }
     }
 }

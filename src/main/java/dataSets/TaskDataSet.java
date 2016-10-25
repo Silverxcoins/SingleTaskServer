@@ -1,20 +1,26 @@
 package dataSets;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.deser.std.TimestampDeserializer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TaskDataSet {
-    private int id;
+    private Integer id;
     private String name;
     private String comment;
     private String date;
     private int time;
     private int user;
-    private List<Integer> variants;
+    private boolean isDeleted;
+    private boolean isUpdated;
+    private Timestamp updated;
 
     public TaskDataSet(JsonNode json) {
         if (json.has("id")) this.id = json.get("id").getIntValue();
@@ -23,13 +29,10 @@ public class TaskDataSet {
         if (json.has("date")) this.date = json.get("date").getTextValue();
         this.time = json.get("time").getIntValue();
         this.user = json.get("user").getIntValue();
-        if (json.has("variants")) {
-            final String[] variantsStringArray = json.get("tasks").getTextValue().split(",");
-            variants = new ArrayList<>();
-            for (String task : variantsStringArray) {
-                variants.add(Integer.parseInt(task));
-            }
-        }
+        if (json.has("isDeleted")) this.isDeleted = json.get("isDeleted").getBooleanValue();
+        if (json.has("isUpdated")) this.isUpdated = json.get("isUpdated").getBooleanValue();
+        this.updated = Timestamp.valueOf(json.get("updated").getTextValue());
+        System.out.println("1 " + updated.toString());
     }
 
     public TaskDataSet(ResultSet resultSet) throws SQLException {
@@ -39,6 +42,8 @@ public class TaskDataSet {
         this.date = resultSet.getString("date");
         this.time = resultSet.getInt("time");
         this.user = resultSet.getInt("user");
+        this.updated = resultSet.getTimestamp("updated");
+        System.out.println("2 " + updated.toString());
     }
 
     public int getUser() {
@@ -49,7 +54,7 @@ public class TaskDataSet {
         this.user = user;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -89,12 +94,29 @@ public class TaskDataSet {
         this.time = time;
     }
 
-    public List<Integer> getVariants() {
-        return variants;
+
+    public boolean isDeleted() {
+        return isDeleted;
     }
 
-    public void setVariants(List<Integer> variants) {
-        this.variants = variants;
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public boolean isUpdated() {
+        return isUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        isUpdated = updated;
+    }
+
+    public Timestamp getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Timestamp updated) {
+        this.updated = updated;
     }
 
 }

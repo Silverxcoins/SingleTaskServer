@@ -22,32 +22,51 @@ public class VariantController {
         variantDAO = new VariantDAOimpl();
     }
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("add")
-    public Response add(String jsonString) throws IOException {
-        final HttpResponse response = variantDAO.addVariant(jsonString);
-        final String json = mapper.writeValueAsString(response);
-        return Response.ok().entity(json).build();
-    }
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("add")
+//    public Response add(String jsonString) throws IOException {
+//        final HttpResponse response = variantDAO.addVariant(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
+//
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("delete")
+//    public Response delete(String jsonString) throws IOException {
+//        final HttpResponse response = variantDAO.deleteVariant(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
+//
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("update")
+//    public Response update(String jsonString) throws IOException {
+//        final HttpResponse response = variantDAO.updateVariant(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("delete")
-    public Response delete(String jsonString) throws IOException {
-        final HttpResponse response = variantDAO.deleteVariant(jsonString);
+    @Path("sync")
+    public Response sync(String jsonString) throws IOException {
+        final HttpResponse response = variantDAO.syncVariants(jsonString);
         final String json = mapper.writeValueAsString(response);
         return Response.ok().entity(json).build();
     }
 
-    @POST
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("update")
-    public Response update(String jsonString) throws IOException {
-        final HttpResponse response = variantDAO.updateVariant(jsonString);
+    @Path("list")
+    public Response list(@QueryParam("user") int userId) throws IOException {
+        final HttpResponse response = variantDAO.getVariants(userId);
         final String json = mapper.writeValueAsString(response);
         return Response.ok().entity(json).build();
     }

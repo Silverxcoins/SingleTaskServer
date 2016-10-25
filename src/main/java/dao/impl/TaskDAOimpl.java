@@ -24,121 +24,36 @@ public class TaskDAOimpl implements TaskDAO {
     }
 
     @Override
-    public HttpResponse addTask(String jsonString) {
-        final JsonNode json;
+    public HttpResponse syncTasks(String jsonString) {
+        final JsonNode[] nodes;
         try {
-            json = mapper.readValue(jsonString, JsonNode.class);
+            nodes = mapper.readValue(jsonString, JsonNode[].class);
         } catch (IOException e) {
             return new HttpResponse(HttpResponse.INVALID_REQUEST);
         }
 
-        final TaskDataSet task;
-        try {
-            task = new TaskDataSet(json);
-        } catch (Exception e) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-
         try (Connection connection = Main.connection.getConnection()) {
-            final PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_INSERT);
-            stmt.setString(1, task.getName());
-            stmt.setObject(2, task.getComment());
-            stmt.setObject(3, task.getDate());
-            stmt.setInt(4, task.getTime());
-            stmt.setInt(5, task.getUser());
-            stmt.execute();
-
-            final ResultSet generatedKeys = stmt.getGeneratedKeys();
-            generatedKeys.next();
-            final int taskId = generatedKeys.getInt(1);
-
-            if (task.getVariants() != null) {
-                final PreparedStatement variantStmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_INSERT);
-                variantStmt.setInt(1, taskId);
-                for (int variantId : task.getVariants()) {
-                    variantStmt.setInt(2, variantId);
-                    variantStmt.execute();
+            for (JsonNode node : nodes) {
+                TaskDataSet clientTask = new TaskDataSet(node);
+                if (clientTask.getId() == null) {
+                    if (!clientTask.isDeleted()) {
+                        addTask(connection, clientTask);
+                    }
+                    continue;
                 }
-                variantStmt.close();
-            }
-
-            stmt.close();
-            return new HttpResponse(new Integer(taskId));
-        } catch (SQLException e) {
-            return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
-        }
-    }
-
-    @Override
-    public HttpResponse deleteTask(String jsonString) {
-        final JsonNode json;
-        try {
-            json = mapper.readValue(jsonString, JsonNode.class);
-        } catch (IOException e) {
-            return new HttpResponse(HttpResponse.INVALID_REQUEST);
-        }
-
-        if (!json.has("id")) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-        final int id = json.get("id").getIntValue();
-        try (Connection connection = Main.connection.getConnection()) {
-            PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_DELETE);
-            stmt.setInt(1, id);
-            stmt.execute();
-
-            stmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_DELETE);
-            stmt.setInt(1, id);
-            stmt.execute();
-
-            stmt.close();
-            return new HttpResponse(HttpResponse.OK);
-        } catch (SQLException e) {
-            return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
-        }
-    }
-
-    @Override
-    public HttpResponse updateTask(String jsonString) {
-        final JsonNode json;
-        try {
-            json = mapper.readValue(jsonString, JsonNode.class);
-        } catch (IOException e) {
-            return new HttpResponse(HttpResponse.INVALID_REQUEST);
-        }
-
-        final TaskDataSet task;
-        try {
-            task = new TaskDataSet(json);
-        } catch (Exception e) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-
-        try (Connection connection = Main.connection.getConnection()) {
-            final PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_UPDATE);
-            stmt.setString(1, task.getName());
-            stmt.setObject(2, task.getComment());
-            stmt.setObject(3, task.getDate());
-            stmt.setInt(4, task.getTime());
-            stmt.setInt(5, task.getUser());
-            stmt.setInt(6, task.getId());
-            stmt.execute();
-
-            PreparedStatement variantStmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_DELETE);
-            variantStmt.setInt(1, task.getId());
-            variantStmt.execute();
-
-            if (task.getVariants() != null) {
-                variantStmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_INSERT);
-                variantStmt.setInt(1, task.getId());
-                for (int variantId : task.getVariants()) {
-                    variantStmt.setInt(2, variantId);
-                    variantStmt.execute();
+                TaskDataSet serverTask = getTask(connection, clientTask.getId());
+                if (serverTask == null) {
+                    continue;
+                }
+                if (clientTask.getUpdated().after(serverTask.getUpdated())) {
+                    if (clientTask.isDeleted()) {
+                        deleteTask(connection, serverTask.getId());
+                    } else if (clientTask.isUpdated()) {
+                        updateTask(connection, clientTask);
+                    }
                 }
             }
 
-            variantStmt.close();
-            stmt.close();
             return new HttpResponse(HttpResponse.OK);
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
@@ -163,4 +78,67 @@ public class TaskDAOimpl implements TaskDAO {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
         }
     }
+
+    public int addTask(Connection connection, TaskDataSet task) throws SQLException{
+        System.out.println("add task");
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_INSERT);
+        stmt.setString(1, task.getName());
+        stmt.setObject(2, task.getComment());
+        stmt.setObject(3, task.getDate());
+        stmt.setInt(4, task.getTime());
+        stmt.setInt(5, task.getUser());
+        stmt.setObject(6, task.getUpdated());
+        stmt.execute();
+
+        final ResultSet generatedKeys = stmt.getGeneratedKeys();
+        generatedKeys.next();
+        final int taskId = generatedKeys.getInt(1);
+
+        stmt.close();
+        return taskId;
+    }
+
+    public void deleteTask(Connection connection, int id) throws SQLException {
+        System.out.println("update task");
+        PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_DELETE);
+        stmt.setInt(1, id);
+        stmt.execute();
+
+        stmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_DELETE);
+        stmt.setInt(1, id);
+        stmt.execute();
+
+        stmt.close();
+    }
+
+    public void updateTask(Connection connection, TaskDataSet task) throws SQLException {
+        System.out.println("update task");
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_UPDATE);
+        stmt.setString(1, task.getName());
+        stmt.setObject(2, task.getComment());
+        stmt.setObject(3, task.getDate());
+        stmt.setInt(4, task.getTime());
+        stmt.setInt(5, task.getUser());
+        stmt.setObject(6, task.getUpdated());
+        stmt.setInt(7, task.getId());
+        System.out.println(stmt.toString());
+        stmt.execute();
+
+        stmt.close();
+    }
+
+    public TaskDataSet getTask(Connection connection, int id) throws SQLException {
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.GET_TASK);
+        stmt.setInt(1,id);
+        ResultSet resultSet = stmt.executeQuery();
+        if (resultSet.next()) {
+            TaskDataSet task = new TaskDataSet(resultSet);
+            stmt.close();
+            return task;
+        } else {
+            stmt.close();
+            return null;
+        }
+    }
+
 }

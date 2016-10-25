@@ -2,6 +2,7 @@ package dao.impl;
 
 import controllers.HttpResponse;
 import dao.VariantDAO;
+import dataSets.CategoryDataSet;
 import dataSets.VariantDataSet;
 import main.Main;
 import main.SQLHelper;
@@ -24,139 +25,101 @@ public class VariantDAOimpl implements VariantDAO{
     }
 
     @Override
-    public HttpResponse addVariant(String jsonString) {
-        final JsonNode json;
+    public HttpResponse syncVariants(String jsonString) {
+        final JsonNode[] nodes;
         try {
-            json = mapper.readValue(jsonString, JsonNode.class);
+            nodes = mapper.readValue(jsonString, JsonNode[].class);
         } catch (IOException e) {
             return new HttpResponse(HttpResponse.INVALID_REQUEST);
         }
 
-        final VariantDataSet variant;
-        try {
-            variant = new VariantDataSet(json);
-        } catch (Exception e) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-
         try (Connection connection = Main.connection.getConnection()) {
-            final PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_INSERT);
-            stmt.setString(1, variant.getName());
-            stmt.setInt(2, variant.getCategory());
-            stmt.execute();
-
-            final ResultSet generatedKeys = stmt.getGeneratedKeys();
-            generatedKeys.next();
-            final int variantId = generatedKeys.getInt(1);
-
-            if (variant.getTasks() != null) {
-                final PreparedStatement taskStmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_INSERT);
-                taskStmt.setInt(2, variantId);
-                final PreparedStatement categoryTaskStmt = connection.prepareStatement(SQLHelper.CATEGORY_TO_TASK_SELECT);
-                final PreparedStatement varTaskDelStmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_FULL_DELETE);
-                for (int taskId : variant.getTasks()) {
-                    categoryTaskStmt.setInt(1, taskId);
-                    final ResultSet resultSet = categoryTaskStmt.executeQuery();
-                    while (resultSet.next()) {
-                        if (resultSet.getInt("category") == variant.getCategory()) {
-                            varTaskDelStmt.setInt(2, resultSet.getInt("id"));
-                            varTaskDelStmt.setInt(1, taskId);
-                        }
-
+            for (JsonNode node : nodes) {
+                VariantDataSet clientVariant = new VariantDataSet(node);
+                if (clientVariant.getId() == null) {
+                    if (!clientVariant.isDeleted()) {
+                        addVariant(connection, clientVariant);
                     }
-                    taskStmt.setInt(1, taskId);
-                    taskStmt.execute();
+                    continue;
                 }
-                taskStmt.close();
+                VariantDataSet serverVariant = getVariant(connection, clientVariant.getId());
+                if (serverVariant == null) {
+                    continue;
+                }
+                if (clientVariant.isDeleted()) {
+                    System.out.println(clientVariant.isDeleted());
+                    deleteVariant(connection, serverVariant.getId());
+                }
             }
 
-            return new HttpResponse(new Integer(generatedKeys.getInt(1)));
+            return new HttpResponse(HttpResponse.OK);
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
         }
     }
 
     @Override
-    public HttpResponse deleteVariant(String jsonString) {
-        final JsonNode json;
-        try {
-            json = mapper.readValue(jsonString, JsonNode.class);
-        } catch (IOException e) {
-            return new HttpResponse(HttpResponse.INVALID_REQUEST);
-        }
-
-        if (!json.has("id")) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
-        final int id = json.get("id").getIntValue();
-
+    public HttpResponse getVariants(int userId) {
         try (Connection connection = Main.connection.getConnection()) {
-            PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_DELETE);
-            stmt.setInt(1, id);
-            stmt.execute();
-
-            stmt = connection.prepareStatement(SQLHelper.VARIANT_TASK_DELETE);
-            stmt.setInt(1, id);
-            stmt.execute();
+            final PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANTS_SELECT);
+            stmt.setInt(1, userId);
+            final ResultSet resultSet = stmt.executeQuery();
+            final List<VariantDataSet> variants = new ArrayList<>();
+            while (resultSet.next()) {
+                final VariantDataSet variant = new VariantDataSet(resultSet);
+                variants.add(variant);
+            }
 
             stmt.close();
-            return new HttpResponse(HttpResponse.OK);
+            return new HttpResponse(variants);
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
         }
     }
 
-    @Override
-    public HttpResponse updateVariant(String jsonString) {
-        final JsonNode json;
-        try {
-            json = mapper.readValue(jsonString, JsonNode.class);
-        } catch (IOException e) {
-            return new HttpResponse(HttpResponse.INVALID_REQUEST);
+    public void addVariant(Connection connection, VariantDataSet variant) throws SQLException{
+        if (new CategoryDAOimpl().getCategory(connection, variant.getCategory()) == null) {
+            return;
         }
+        System.out.println("add variant");
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_INSERT);
+        stmt.setString(1, variant.getName());
+        stmt.setInt(2, variant.getCategory());
+        System.out.println(stmt.toString());
+        stmt.execute();
 
-        final VariantDataSet variant;
-        try {
-            variant = new VariantDataSet(json);
-        } catch (Exception e) {
-            return new HttpResponse(HttpResponse.INCORRECT_REQUEST);
-        }
+        final ResultSet generatedKeys = stmt.getGeneratedKeys();
+        generatedKeys.next();
+        final int variantId = generatedKeys.getInt(1);
 
-        try (Connection connection = Main.connection.getConnection()) {
-            final PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_UPDATE);
-            stmt.setString(1, variant.getName());
-            stmt.setInt(2, variant.getId());
-            stmt.execute();
-            System.out.println("1");
+        stmt.close();
+    }
 
-            PreparedStatement taskStmt = connection.prepareStatement(SQLHelper.VARIANT_TASK_DELETE);
-            taskStmt.setInt(1, variant.getId());
+    public void deleteVariant(Connection connection, int id) throws SQLException {
+        System.out.println("delete variant");
+        PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_DELETE);
+        stmt.setInt(1, id);
+        System.out.println(stmt.toString());
+        stmt.execute();
 
-            if (variant.getTasks() != null) {
-                taskStmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_INSERT);
-                taskStmt.setInt(2, variant.getId());
-                final PreparedStatement categoryTaskStmt = connection.prepareStatement(SQLHelper.CATEGORY_TO_TASK_SELECT);
-                final PreparedStatement varTaskDelStmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_FULL_DELETE);
-                for (int taskId : variant.getTasks()) {
-                    categoryTaskStmt.setInt(1, taskId);
-                    final ResultSet resultSet = categoryTaskStmt.executeQuery();
-                    while (resultSet.next()) {
-                        if (resultSet.getInt("category") == variant.getCategory()) {
-                            varTaskDelStmt.setInt(1, taskId);
-                            varTaskDelStmt.setInt(2, resultSet.getInt("id"));
-                        }
+        stmt = connection.prepareStatement(SQLHelper.VARIANT_TASK_DELETE);
+        stmt.setInt(1, id);
+        stmt.execute();
 
-                    }
+        stmt.close();
+    }
 
-                    taskStmt.setInt(1, taskId);
-                    taskStmt.execute();
-                }
-                taskStmt.close();
-            }
-
-            return new HttpResponse(HttpResponse.OK);
-        } catch (SQLException e) {
-            return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
+    public VariantDataSet getVariant(Connection connection, int id) throws SQLException {
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.GET_VARIANT);
+        stmt.setInt(1,id);
+        ResultSet resultSet = stmt.executeQuery();
+        if (resultSet.next()) {
+            VariantDataSet variant = new VariantDataSet(resultSet);
+            stmt.close();
+            return variant;
+        } else {
+            stmt.close();
+            return null;
         }
     }
 

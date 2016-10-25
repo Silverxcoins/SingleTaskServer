@@ -22,32 +22,42 @@ public class TaskController {
         taskDAO = new TaskDAOimpl();
     }
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("add")
-    public Response add(String jsonString) throws IOException {
-        final HttpResponse response = taskDAO.addTask(jsonString);
-        final String json = mapper.writeValueAsString(response);
-        return Response.ok().entity(json).build();
-    }
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("add")
+//    public Response add(String jsonString) throws IOException {
+//        final HttpResponse response = taskDAO.addTask(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
+
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("delete")
+//    public Response delete(String jsonString) throws IOException {
+//        final HttpResponse response = taskDAO.deleteTask(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
+//
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("update")
+//    public Response update(String jsonString) throws IOException {
+//        final HttpResponse response = taskDAO.updateTask(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("delete")
-    public Response delete(String jsonString) throws IOException {
-        final HttpResponse response = taskDAO.deleteTask(jsonString);
-        final String json = mapper.writeValueAsString(response);
-        return Response.ok().entity(json).build();
-    }
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("update")
-    public Response update(String jsonString) throws IOException {
-        final HttpResponse response = taskDAO.updateTask(jsonString);
+    @Path("sync")
+    public Response sync(String jsonString) throws IOException {
+        final HttpResponse response = taskDAO.syncTasks(jsonString);
         final String json = mapper.writeValueAsString(response);
         return Response.ok().entity(json).build();
     }

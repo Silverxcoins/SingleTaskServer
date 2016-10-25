@@ -22,32 +22,42 @@ public class CategoryController {
         categoryDAO = new CategoryDAOimpl();
     }
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("add")
-    public Response add(String jsonString) throws IOException {
-        final HttpResponse response = categoryDAO.addCategory(jsonString);
-        final String json = mapper.writeValueAsString(response);
-        return Response.ok().entity(json).build();
-    }
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("add")
+//    public Response add(String jsonString) throws IOException {
+//        final HttpResponse response = categoryDAO.addCategory(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
+//
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("delete")
+//    public Response delete(String jsonString) throws IOException {
+//        final HttpResponse response = categoryDAO.deleteCategory(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
+//
+//    @POST
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("update")
+//    public Response update(String jsonString) throws IOException {
+//        final HttpResponse response = categoryDAO.updateCategory(jsonString);
+//        final String json = mapper.writeValueAsString(response);
+//        return Response.ok().entity(json).build();
+//    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("delete")
-    public Response delete(String jsonString) throws IOException {
-        final HttpResponse response = categoryDAO.deleteCategory(jsonString);
-        final String json = mapper.writeValueAsString(response);
-        return Response.ok().entity(json).build();
-    }
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("update")
+    @Path("sync")
     public Response update(String jsonString) throws IOException {
-        final HttpResponse response = categoryDAO.updateCategory(jsonString);
+        final HttpResponse response = categoryDAO.syncCategories(jsonString);
         final String json = mapper.writeValueAsString(response);
         return Response.ok().entity(json).build();
     }
