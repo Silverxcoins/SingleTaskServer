@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="17d84967-0af4-4f22-bd06-a83d57978d46" name="Default" comment="sync, list">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dao/impl/CategoryDAOimpl.java" afterPath="$PROJECT_DIR$/src/main/java/dao/impl/CategoryDAOimpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dao/impl/TaskDAOimpl.java" afterPath="$PROJECT_DIR$/src/main/java/dao/impl/TaskDAOimpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dao/impl/TaskVariantDAOimpl.java" afterPath="$PROJECT_DIR$/src/main/java/dao/impl/TaskVariantDAOimpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dao/impl/VariantDAOimpl.java" afterPath="$PROJECT_DIR$/src/main/java/dao/impl/VariantDAOimpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dataSets/CategoryDataSet.java" afterPath="$PROJECT_DIR$/src/main/java/dataSets/CategoryDataSet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dataSets/TaskDataSet.java" afterPath="$PROJECT_DIR$/src/main/java/dataSets/TaskDataSet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dataSets/TaskVariantDataSet.java" afterPath="$PROJECT_DIR$/src/main/java/dataSets/TaskVariantDataSet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dataSets/VariantDataSet.java" afterPath="$PROJECT_DIR$/src/main/java/dataSets/VariantDataSet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/main/SQLHelper.java" afterPath="$PROJECT_DIR$/src/main/java/main/SQLHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/dao/impl/UserDAOimpl.java" afterPath="$PROJECT_DIR$/src/main/java/dao/impl/UserDAOimpl.java" />
     </list>
     <ignored path="SingleTaskServer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -57,16 +48,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SQLHelper.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/main/SQLHelper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="26" column="59" selection-start-line="26" selection-start-column="59" selection-end-line="26" selection-end-column="133" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="TaskVariantDAOimpl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/dao/impl/TaskVariantDAOimpl.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -92,12 +73,27 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/main/Main.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="225">
               <caret line="23" column="72" selection-start-line="23" selection-start-column="72" selection-end-line="23" selection-end-column="72" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UserDAOimpl.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/dao/impl/UserDAOimpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="301">
+              <caret line="97" column="35" selection-start-line="97" selection-start-column="35" selection-end-line="97" selection-end-column="35" />
+              <folding>
+                <marker date="1477484010000" expanded="true" signature="1407:1448" placeholder="SELECT COUNT... User" />
+                <marker date="1477484010000" expanded="true" signature="1878:1919" placeholder="SELECT COUNT... User" />
+                <marker date="1477484010000" expanded="true" signature="2204:2258" placeholder="INSERT INTO User... " />
+                <marker date="1477484010000" expanded="true" signature="3293:3345" placeholder="SELECT id FR... User" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -242,7 +238,6 @@
         <option value="$PROJECT_DIR$/src/main/java/dao/UserDAO.java" />
         <option value="$PROJECT_DIR$/src/main/java/main/Connector.java" />
         <option value="$PROJECT_DIR$/src/main/java/controllers/UserController.java" />
-        <option value="$PROJECT_DIR$/src/main/java/dao/impl/UserDAOimpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/controllers/HttpResponse.java" />
         <option value="$PROJECT_DIR$/src/main/java/dao/TaskDAO.java" />
         <option value="$PROJECT_DIR$/src/main/java/dao/CategoryDAO.java" />
@@ -263,6 +258,7 @@
         <option value="$PROJECT_DIR$/src/main/java/dataSets/VariantDataSet.java" />
         <option value="$PROJECT_DIR$/src/main/java/dao/impl/VariantDAOimpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/main/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/dao/impl/UserDAOimpl.java" />
       </list>
     </option>
   </component>
@@ -1270,13 +1266,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/dao/impl/UserDAOimpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="451">
-          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/dao/VariantDAO.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -1512,6 +1501,19 @@
         <state relative-caret-position="225">
           <caret line="23" column="72" selection-start-line="23" selection-start-column="72" selection-end-line="23" selection-end-column="72" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/dao/impl/UserDAOimpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="97" column="35" selection-start-line="97" selection-start-column="35" selection-end-line="97" selection-end-column="35" />
+          <folding>
+            <marker date="1477484010000" expanded="true" signature="1407:1448" placeholder="SELECT COUNT... User" />
+            <marker date="1477484010000" expanded="true" signature="1878:1919" placeholder="SELECT COUNT... User" />
+            <marker date="1477484010000" expanded="true" signature="2204:2258" placeholder="INSERT INTO User... " />
+            <marker date="1477484010000" expanded="true" signature="3293:3345" placeholder="SELECT id FR... User" />
+          </folding>
         </state>
       </provider>
     </entry>

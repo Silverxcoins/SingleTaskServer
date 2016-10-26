@@ -88,14 +88,14 @@ public class UserDAOimpl implements UserDAO {
         final String password = json.get("password").getTextValue();
 
         try (Connection connection = Main.connection.getConnection()) {
-            final PreparedStatement stmt = connection.prepareStatement("SELECT token FROM User WHERE email = ? AND password = ?");
+            final PreparedStatement stmt = connection.prepareStatement("SELECT id FROM User WHERE email = ? AND password = ?");
             stmt.setString(1, email);
             stmt.setString(2, password);
             final ResultSet resultSet = stmt.executeQuery();
             if (resultSet.next()) {
-                final String token = resultSet.getString(1);
+                final int id = resultSet.getInt(1);
                 stmt.close();
-                return new HttpResponse(token);
+                return new HttpResponse(id);
             }else {
                 stmt.close();
                 return new HttpResponse(HttpResponse.NOT_FOUND);
