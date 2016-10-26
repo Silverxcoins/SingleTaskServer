@@ -33,32 +33,66 @@ public class CategoryDAOimpl implements CategoryDAO {
         }
 
         try (Connection connection = Main.connection.getConnection()) {
+            List<CategoryDataSet> categories = new ArrayList<>();
             for (JsonNode node : nodes) {
-                CategoryDataSet clientCategory = new CategoryDataSet(node);
-                if (clientCategory.getId() == null) {
-                    if (!clientCategory.getIsDeleted()) {
-                        addCategory(connection, clientCategory);
-                    }
+                categories.add(new CategoryDataSet(node));
+            }
+
+            List<CategoryDataSet> done = new ArrayList<>();
+            for (CategoryDataSet category : categories) {
+                if (done.contains(category)) {
                     continue;
                 }
-                CategoryDataSet serverCategory = getCategory(connection, clientCategory.getId());
-                if (serverCategory == null) {
-                    continue;
-                }
-                if (clientCategory.getLastUpdateTS().after(serverCategory.getLastUpdateTS())) {
-                    if (clientCategory.getIsDeleted()) {
-                        System.out.println(clientCategory.getIsDeleted());
-                        deleteCategory(connection, serverCategory.getId());
-                    } else if (clientCategory.getIsUpdated()) {
-                        updateCategory(connection, clientCategory);
+                if (category.getParentAsObject() != null && category.getParent() != 0) {
+                    CategoryDataSet parent = category;
+                    for (CategoryDataSet c : categories) {
+                        if (c.getClientId() == category.getParent()) {
+                            parent = c;
+                        }
                     }
+                    int parentId = (done.contains(parent)) ?
+                            parent.getId()
+                            : processCategory(connection, parent);
+                    System.out.println("!!!!!!!! " + parentId);
+                    if (parentId == 0) {
+                        deleteCategory(connection, category.getId());
+                        continue;
+                    }
+                    category.setParent(parentId);
+                    done.add(parent);
                 }
+                category.setId(processCategory(connection, category));
+                done.add(category);
             }
 
             return new HttpResponse(HttpResponse.OK);
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
         }
+    }
+
+    private int processCategory(Connection connection, CategoryDataSet clientCategory) throws SQLException {
+        if (clientCategory.getId() == null) {
+            if (!clientCategory.getIsDeleted()) {
+               return addCategory(connection, clientCategory);
+            }
+            return 0;
+        }
+        CategoryDataSet serverCategory = getCategory(connection, clientCategory.getId());
+        if (serverCategory == null) {
+            return 0;
+        }
+        if (clientCategory.getLastUpdateTS().after(serverCategory.getLastUpdateTS())) {
+            System.out.println(clientCategory.getLastUpdateTS().after(serverCategory.getLastUpdateTS()));
+            if (clientCategory.getIsDeleted()) {
+                deleteCategory(connection, serverCategory.getId());
+                return 0;
+            } else if (clientCategory.getIsUpdated()) {
+                updateCategory(connection, clientCategory);
+                return clientCategory.getId();
+            }
+        }
+        return clientCategory.getId();
     }
 
     @Override

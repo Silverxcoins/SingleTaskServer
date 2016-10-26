@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 
 public class CategoryDataSet {
     private Integer id;
+    private Integer clientId;
     private String name;
     private int parent;
     private int user;
@@ -17,7 +18,8 @@ public class CategoryDataSet {
     private Timestamp lastUpdate;
 
     public CategoryDataSet(JsonNode json) {
-        if (json.has("id")) this.id = json.get("id").getIntValue();
+        if (json.has("serverId")) this.id = json.get("serverId").getIntValue();
+        if (json.has("id")) this.clientId = json.get("id").getIntValue();
         this.name = json.get("name").getTextValue();
         if (json.has("parent")) this.parent = json.get("parent").getIntValue();
         this.user = json.get("user").getIntValue();
@@ -97,4 +99,11 @@ public class CategoryDataSet {
     }
 
 
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public Integer getParentAsObject() {
+        return new Integer(parent);
+    }
 }
