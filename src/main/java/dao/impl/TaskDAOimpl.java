@@ -36,7 +36,7 @@ public class TaskDAOimpl implements TaskDAO {
             for (JsonNode node : nodes) {
                 TaskDataSet clientTask = new TaskDataSet(node);
                 if (clientTask.getId() == null) {
-                    if (!clientTask.isDeleted()) {
+                    if (!clientTask.getIsDeleted()) {
                         addTask(connection, clientTask);
                     }
                     continue;
@@ -45,10 +45,10 @@ public class TaskDAOimpl implements TaskDAO {
                 if (serverTask == null) {
                     continue;
                 }
-                if (clientTask.getUpdated().after(serverTask.getUpdated())) {
-                    if (clientTask.isDeleted()) {
+                if (clientTask.getLastUpdateTS().after(serverTask.getLastUpdateTS())) {
+                    if (clientTask.getIsDeleted()) {
                         deleteTask(connection, serverTask.getId());
-                    } else if (clientTask.isUpdated()) {
+                    } else if (clientTask.getIsUpdated()) {
                         updateTask(connection, clientTask);
                     }
                 }
@@ -87,7 +87,7 @@ public class TaskDAOimpl implements TaskDAO {
         stmt.setObject(3, task.getDate());
         stmt.setInt(4, task.getTime());
         stmt.setInt(5, task.getUser());
-        stmt.setObject(6, task.getUpdated());
+        stmt.setObject(6, task.getLastUpdateTS());
         stmt.execute();
 
         final ResultSet generatedKeys = stmt.getGeneratedKeys();
@@ -119,7 +119,7 @@ public class TaskDAOimpl implements TaskDAO {
         stmt.setObject(3, task.getDate());
         stmt.setInt(4, task.getTime());
         stmt.setInt(5, task.getUser());
-        stmt.setObject(6, task.getUpdated());
+        stmt.setObject(6, task.getLastUpdateTS());
         stmt.setInt(7, task.getId());
         System.out.println(stmt.toString());
         stmt.execute();

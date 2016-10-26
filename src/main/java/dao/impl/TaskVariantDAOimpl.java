@@ -36,11 +36,10 @@ public class TaskVariantDAOimpl implements TaskVariantDAO {
         try (Connection connection = Main.connection.getConnection()) {
             for (JsonNode node : nodes) {
                 TaskVariantDataSet clientTV = new TaskVariantDataSet(node);
-                if (!clientTV.isDeleted()) {
+                if (!clientTV.getIsDeleted()) {
                     addTaskVariant(connection, clientTV);
                     continue;
                 } else {
-                    System.out.println(clientTV.isDeleted());
                     deleteTaskVariant(connection, clientTV);
                 }
             }
@@ -57,14 +56,13 @@ public class TaskVariantDAOimpl implements TaskVariantDAO {
             final PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_FULL_SELECT);
             stmt.setInt(1, userId);
             final ResultSet resultSet = stmt.executeQuery();
-            final List<VariantDataSet> variants = new ArrayList<>();
+            final List<TaskVariantDataSet> tvs = new ArrayList<>();
             while (resultSet.next()) {
-                final VariantDataSet variant = new VariantDataSet(resultSet);
-                variants.add(variant);
+                final TaskVariantDataSet tv = new TaskVariantDataSet(resultSet);
+                tvs.add(tv);
             }
-
             stmt.close();
-            return new HttpResponse(variants);
+            return new HttpResponse(tvs);
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
         }
@@ -77,7 +75,7 @@ public class TaskVariantDAOimpl implements TaskVariantDAO {
             return;
         }
         System.out.println("add taskVariant");
-        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_INSERT);
+        final PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_VARIANT_INSERT);
         stmt.setInt(1, tV.getTask());
         stmt.setInt(2, tV.getVariant());
         System.out.println(stmt.toString());

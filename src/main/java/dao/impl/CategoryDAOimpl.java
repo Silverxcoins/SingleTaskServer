@@ -36,7 +36,7 @@ public class CategoryDAOimpl implements CategoryDAO {
             for (JsonNode node : nodes) {
                 CategoryDataSet clientCategory = new CategoryDataSet(node);
                 if (clientCategory.getId() == null) {
-                    if (!clientCategory.isDeleted()) {
+                    if (!clientCategory.getIsDeleted()) {
                         addCategory(connection, clientCategory);
                     }
                     continue;
@@ -45,11 +45,11 @@ public class CategoryDAOimpl implements CategoryDAO {
                 if (serverCategory == null) {
                     continue;
                 }
-                if (clientCategory.getUpdated().after(serverCategory.getUpdated())) {
-                    if (clientCategory.isDeleted()) {
-                        System.out.println(clientCategory.isDeleted());
+                if (clientCategory.getLastUpdateTS().after(serverCategory.getLastUpdateTS())) {
+                    if (clientCategory.getIsDeleted()) {
+                        System.out.println(clientCategory.getIsDeleted());
                         deleteCategory(connection, serverCategory.getId());
-                    } else if (clientCategory.isUpdated()) {
+                    } else if (clientCategory.getIsUpdated()) {
                         updateCategory(connection, clientCategory);
                     }
                 }
@@ -86,7 +86,7 @@ public class CategoryDAOimpl implements CategoryDAO {
         stmt.setString(1, category.getName());
         stmt.setInt(2, category.getParent());
         stmt.setInt(3, category.getUser());
-        stmt.setObject(4, category.getUpdated());
+        stmt.setObject(4, category.getLastUpdateTS());
         System.out.println(stmt.toString());
         stmt.execute();
 
@@ -126,7 +126,7 @@ public class CategoryDAOimpl implements CategoryDAO {
         stmt.setString(1, category.getName());
         stmt.setInt(2, category.getParent());
         stmt.setInt(3, category.getUser());
-        stmt.setObject(4, category.getUpdated());
+        stmt.setObject(4, category.getLastUpdateTS());
         stmt.setInt(5, category.getId());
         stmt.execute();
 

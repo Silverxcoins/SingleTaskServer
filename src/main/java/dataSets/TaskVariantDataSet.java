@@ -17,6 +17,7 @@ public class TaskVariantDataSet {
     }
 
     public TaskVariantDataSet(ResultSet resultSet) throws SQLException {
+        System.out.println("HERdE");
         this.task = resultSet.getInt("task");
         this.variant = resultSet.getInt("variant");
     }
@@ -37,11 +38,11 @@ public class TaskVariantDataSet {
         this.variant = variant;
     }
 
-    public boolean isDeleted() {
+    public boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setIsDeleted(boolean deleted) {
         isDeleted = deleted;
     }
 }

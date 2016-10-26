@@ -14,7 +14,7 @@ public class CategoryDataSet {
     private int user;
     private boolean isDeleted;
     private boolean isUpdated;
-    private Timestamp updated;
+    private Timestamp lastUpdate;
 
     public CategoryDataSet(JsonNode json) {
         if (json.has("id")) this.id = json.get("id").getIntValue();
@@ -23,7 +23,7 @@ public class CategoryDataSet {
         this.user = json.get("user").getIntValue();
         if (json.has("isDeleted")) this.isDeleted = json.get("isDeleted").getBooleanValue();
         if (json.has("isUpdated")) this.isUpdated = json.get("isUpdated").getBooleanValue();
-        this.updated = Timestamp.valueOf(json.get("updated").getTextValue());
+        this.lastUpdate = Timestamp.valueOf(json.get("lastUpdate").getTextValue());
     }
 
     public CategoryDataSet(ResultSet resultSet) throws SQLException {
@@ -31,7 +31,8 @@ public class CategoryDataSet {
         this.name = resultSet.getString("name");
         this.parent = resultSet.getInt("parent");
         this.user = resultSet.getInt("user");
-        this.updated = resultSet.getTimestamp("updated");
+        this.lastUpdate = resultSet.getTimestamp("lastUpdate");
+        System.out.println("lastupdate! " + lastUpdate);
     }
 
     public Integer getId() {
@@ -66,28 +67,33 @@ public class CategoryDataSet {
         this.user = user;
     }
 
-    public boolean isDeleted() {
+    public boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setIsDeleted(boolean deleted) {
         isDeleted = deleted;
     }
 
-    public boolean isUpdated() {
+    public boolean getIsUpdated() {
         return isUpdated;
     }
 
-    public void setUpdated(boolean updated) {
-        isUpdated = updated;
+    public void setIsUpdated(boolean lastUpdate) {
+        isUpdated = lastUpdate;
     }
 
-    public Timestamp getUpdated() {
-        return updated;
+
+    public String getLastUpdate() {
+        return lastUpdate.toString();
     }
 
-    public void setUpdated(Timestamp updated) {
-        this.updated = updated;
+    public Timestamp getLastUpdateTS() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Timestamp lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
 
