@@ -98,6 +98,10 @@ public class CategoryDataSet {
         this.lastUpdate = lastUpdate;
     }
 
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
+
 
     public Integer getClientId() {
         return clientId;
