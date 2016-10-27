@@ -36,7 +36,7 @@ public class VariantDAOimpl implements VariantDAO{
         try (Connection connection = Main.connection.getConnection()) {
             for (JsonNode node : nodes) {
                 VariantDataSet clientVariant = new VariantDataSet(node);
-                if (clientVariant.getId() == null) {
+                if (clientVariant.getId() == null || clientVariant.getId() == 0) {
                     if (!clientVariant.getIsDeleted()) {
                         addVariant(connection, clientVariant);
                     }

@@ -72,7 +72,7 @@ public class CategoryDAOimpl implements CategoryDAO {
     }
 
     private int processCategory(Connection connection, CategoryDataSet clientCategory) throws SQLException {
-        if (clientCategory.getId() == null) {
+        if (clientCategory.getId() == null || clientCategory.getId() == 0) {
             if (!clientCategory.getIsDeleted()) {
                return addCategory(connection, clientCategory);
             }

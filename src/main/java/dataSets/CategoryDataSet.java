@@ -19,6 +19,7 @@ public class CategoryDataSet {
 
     public CategoryDataSet(JsonNode json) {
         if (json.has("serverId")) this.id = json.get("serverId").getIntValue();
+        if (json.get("serverId").getIntValue() == 0) id = null;
         if (json.has("id")) this.clientId = json.get("id").getIntValue();
         this.name = json.get("name").getTextValue();
         if (json.has("parent")) this.parent = json.get("parent").getIntValue();

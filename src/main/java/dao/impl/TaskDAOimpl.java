@@ -35,7 +35,7 @@ public class TaskDAOimpl implements TaskDAO {
         try (Connection connection = Main.connection.getConnection()) {
             for (JsonNode node : nodes) {
                 TaskDataSet clientTask = new TaskDataSet(node);
-                if (clientTask.getId() == null) {
+                if (clientTask.getId() == null || clientTask.getId() == 0) {
                     if (!clientTask.getIsDeleted()) {
                         addTask(connection, clientTask);
                     }
