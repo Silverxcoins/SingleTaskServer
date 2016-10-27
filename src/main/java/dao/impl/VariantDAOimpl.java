@@ -50,8 +50,8 @@ public class VariantDAOimpl implements VariantDAO{
                     System.out.println(clientVariant.getIsDeleted());
                     deleteVariant(connection, serverVariant.getId());
                 }
+                updateClientId(connection, clientVariant.getClientId(), serverVariant.getId());
             }
-
             return new HttpResponse(HttpResponse.OK);
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
@@ -160,5 +160,13 @@ public class VariantDAOimpl implements VariantDAO{
         } catch (SQLException e) {
             return new HttpResponse(HttpResponse.UNKNOWN_ERROR);
         }
+    }
+
+    public void updateClientId(Connection connection, int clientId, int id) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_UPDATE_CLIENT_ID);
+        stmt.setInt(1, clientId);
+        stmt.setInt(2, id);
+        stmt.execute();
+        stmt.close();
     }
 }

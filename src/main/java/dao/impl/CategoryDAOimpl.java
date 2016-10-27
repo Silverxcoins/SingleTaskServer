@@ -92,6 +92,7 @@ public class CategoryDAOimpl implements CategoryDAO {
                 return clientCategory.getId();
             }
         }
+        updateClientId(connection, clientCategory.getClientId(), serverCategory.getId());
         return clientCategory.getId();
     }
 
@@ -152,6 +153,14 @@ public class CategoryDAOimpl implements CategoryDAO {
         stmt.setInt(1, id);
         stmt.execute();
 
+        stmt.close();
+    }
+
+    public void updateClientId(Connection connection, int clientId, int id) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement(SQLHelper.CATEGORY_UPDATE_CLIENT_ID);
+        stmt.setInt(1, clientId);
+        stmt.setInt(2, id);
+        stmt.execute();
         stmt.close();
     }
 

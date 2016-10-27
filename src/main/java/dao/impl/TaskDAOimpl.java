@@ -52,6 +52,7 @@ public class TaskDAOimpl implements TaskDAO {
                         updateTask(connection, clientTask);
                     }
                 }
+                updateClientId(connection, clientTask.getClientId(), serverTask.getId());
             }
 
             return new HttpResponse(HttpResponse.OK);
@@ -142,4 +143,11 @@ public class TaskDAOimpl implements TaskDAO {
         }
     }
 
+    public void updateClientId(Connection connection, int clientId, int id) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement(SQLHelper.TASK_UPDATE_CLIENT_ID);
+        stmt.setInt(1, clientId);
+        stmt.setInt(2, id);
+        stmt.execute();
+        stmt.close();
+    }
 }

@@ -32,5 +32,7 @@ public class SQLHelper {
     public static final String GET_TASK = "SELECT * FROM Task WHERE id=?";
     public static final String GET_CATEGORY = "SELECT * FROM Category WHERE id=?";
     public static final String GET_VARIANT = "SELECT * FROM Variant WHERE id=?";
-    public static final String GET_TASK_VARIANT = "SELECT * FROM TaskVariant WHERE task=? AND variant=?";
+    public static final String CATEGORY_UPDATE_CLIENT_ID = "UPDATE Category SET clientId=? WHERE id=?";
+    public static final String TASK_UPDATE_CLIENT_ID = "UPDATE Task SET clientId=? WHERE id=?";
+    public static final String VARIANT_UPDATE_CLIENT_ID = "UPDATE Variant SET clientId=? WHERE id=?";
 }
