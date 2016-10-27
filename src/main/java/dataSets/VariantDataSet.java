@@ -10,12 +10,14 @@ import java.util.List;
 
 public class VariantDataSet {
     private Integer id;
+    private Integer clientId;
     private String name;
     private int category;
     private boolean isDeleted;
 
     public VariantDataSet(JsonNode json) {
-        if (json.has("id")) this.id = json.get("id").getIntValue();
+        if (json.has("serverId")) this.id = json.get("serverId").getIntValue();
+        if (json.has("id")) this.clientId = json.get("id").getIntValue();
         this.name = json.get("name").getTextValue();
         this.category = json.get("category").getIntValue();
         if (json.has("isDeleted")) this.isDeleted = json.get("isDeleted").getBooleanValue();
@@ -57,6 +59,14 @@ public class VariantDataSet {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
     }
 }
 

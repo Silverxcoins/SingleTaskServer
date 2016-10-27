@@ -13,6 +13,7 @@ import java.util.List;
 
 public class TaskDataSet {
     private Integer id;
+    private Integer clientId;
     private String name;
     private String comment;
     private String date;
@@ -23,7 +24,8 @@ public class TaskDataSet {
     private Timestamp lastUpdate;
 
     public TaskDataSet(JsonNode json) {
-        if (json.has("id")) this.id = json.get("id").getIntValue();
+        if (json.has("serverId")) this.id = json.get("serverId").getIntValue();
+        if (json.has("id")) this.clientId = json.get("id").getIntValue();
         this.name = json.get("name").getTextValue();
         if (json.has("comment")) this.comment = json.get("comment").getTextValue();
         if (json.has("date")) this.date = json.get("date").getTextValue();
@@ -123,4 +125,11 @@ public class TaskDataSet {
         this.lastUpdate = lastUpdate;
     }
 
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
+    }
 }
