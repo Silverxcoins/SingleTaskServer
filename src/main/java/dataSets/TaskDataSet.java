@@ -39,6 +39,7 @@ public class TaskDataSet {
 
     public TaskDataSet(ResultSet resultSet) throws SQLException {
         this.id = resultSet.getInt("id");
+        this.clientId = resultSet.getInt("clientId");
         this.name = resultSet.getString("name");
         this.comment = resultSet.getString("comment");
         this.date = resultSet.getString("date");

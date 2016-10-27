@@ -30,8 +30,9 @@ CREATE TABLE `Category` (
   `parent` int(11) DEFAULT NULL,
   `user` int(11) NOT NULL,
   `lastUpdate` datetime DEFAULT NULL,
+  `clientId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,6 +50,7 @@ CREATE TABLE `Task` (
   `lastUpdate` datetime DEFAULT NULL,
   `time` int(11) NOT NULL,
   `user` int(11) NOT NULL,
+  `clientId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -95,6 +97,7 @@ CREATE TABLE `Variant` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `category` int(11) NOT NULL,
+  `clientId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -108,4 +111,4 @@ CREATE TABLE `Variant` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-10-26 16:15:32
+-- Dump completed on 2016-10-27 11:20:13

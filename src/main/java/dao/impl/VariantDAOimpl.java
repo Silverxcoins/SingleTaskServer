@@ -85,6 +85,7 @@ public class VariantDAOimpl implements VariantDAO{
         final PreparedStatement stmt = connection.prepareStatement(SQLHelper.VARIANT_INSERT);
         stmt.setString(1, variant.getName());
         stmt.setInt(2, variant.getCategory());
+        stmt.setInt(3, variant.getClientId());
         System.out.println(stmt.toString());
         stmt.execute();
 

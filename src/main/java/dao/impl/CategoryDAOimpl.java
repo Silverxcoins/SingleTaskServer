@@ -121,6 +121,7 @@ public class CategoryDAOimpl implements CategoryDAO {
         stmt.setInt(2, category.getParent());
         stmt.setInt(3, category.getUser());
         stmt.setObject(4, category.getLastUpdateTS());
+        stmt.setInt(5, category.getClientId());
         System.out.println(stmt.toString());
         stmt.execute();
 

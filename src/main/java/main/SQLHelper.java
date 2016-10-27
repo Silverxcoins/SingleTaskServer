@@ -1,16 +1,16 @@
 package main;
 
 public class SQLHelper {
-    public static final String CATEGORY_INSERT = "INSERT INTO Category (name,parent,user,lastUpdate) VALUES (?,?,?,?);";
+    public static final String CATEGORY_INSERT = "INSERT INTO Category (name,parent,user,lastUpdate, clientId) VALUES (?,?,?,?,?);";
     public static final String CATEGORY_DELETE = "DELETE FROM Category WHERE id=?;";
     public static final String CATEGORY_UPDATE = "UPDATE Category SET name=?,parent=?,user=?,lastUpdate=? WHERE id=?";
     public static final String CATEGORY_SELECT_CHILDS = "SELECT id FROM Category WHERE parent=?;";
     public static final String CATEGORIES_SELECT = "SELECT * FROM Category WHERE user=?;";
-    public static final String TASK_INSERT = "INSERT INTO Task (name,comment,date,time,user,lastUpdate) VALUES (?,?,?,?,?,?);";
+    public static final String TASK_INSERT = "INSERT INTO Task (name,comment,date,time,user,lastUpdate, clientId) VALUES (?,?,?,?,?,?,?);";
     public static final String TASK_DELETE = "DELETE FROM Task WHERE id=?;";
     public static final String TASK_UPDATE = "UPDATE Task SET name=?,comment=?,date=?,time=?,user=?,lastUpdate=? WHERE id=?;";
     public static final String TASKS_SELECT = "SELECT * FROM Task WHERE user=?;";
-    public static final String VARIANT_INSERT = "INSERT INTO Variant (name,category) VALUES (?,?);";
+    public static final String VARIANT_INSERT = "INSERT INTO Variant (name,category, clientId) VALUES (?,?,?);";
     public static final String VARIANT_DELETE = "DELETE FROM Variant WHERE id=?;";
     public static final String VARIANT_DELETE_BY_CATEGORY = "DELETE FROM Variant WHERE category=?;";
     public static final String VARIANT_DELETE_BY_TASK = "DELETE FROM Variant WHERE task=?;";

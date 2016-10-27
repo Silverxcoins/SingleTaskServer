@@ -25,6 +25,7 @@ public class VariantDataSet {
 
     public VariantDataSet(ResultSet resultSet) throws SQLException {
         this.id = resultSet.getInt("id");
+        this.clientId = resultSet.getInt("clientId");
         this.name = resultSet.getString("name");
         this.category = resultSet.getInt("category");
     }

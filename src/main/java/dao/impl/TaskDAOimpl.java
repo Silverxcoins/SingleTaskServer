@@ -88,6 +88,7 @@ public class TaskDAOimpl implements TaskDAO {
         stmt.setInt(4, task.getTime());
         stmt.setInt(5, task.getUser());
         stmt.setObject(6, task.getLastUpdateTS());
+        stmt.setInt(7, task.getClientId());
         stmt.execute();
 
         final ResultSet generatedKeys = stmt.getGeneratedKeys();

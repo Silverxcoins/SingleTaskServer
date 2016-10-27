@@ -30,6 +30,7 @@ public class CategoryDataSet {
     }
 
     public CategoryDataSet(ResultSet resultSet) throws SQLException {
+        this.clientId = resultSet.getInt("clientId");
         this.id = resultSet.getInt("id");
         this.name = resultSet.getString("name");
         this.parent = resultSet.getInt("parent");
