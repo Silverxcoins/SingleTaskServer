@@ -14,7 +14,9 @@ public class SQLHelper {
     public static final String VARIANT_DELETE = "DELETE FROM Variant WHERE id=?;";
     public static final String VARIANT_DELETE_BY_CATEGORY = "DELETE FROM Variant WHERE category=?;";
     public static final String VARIANT_DELETE_BY_TASK = "DELETE FROM Variant WHERE task=?;";
-    public static final String VARIANTS_SELECT = "SELECT DISTINCT Variant.* FROM Variant JOIN Category WHERE Category.user=?;";
+    public static final String VARIANTS_SELECT = "SELECT DISTINCT Variant.* " +
+            "FROM Variant JOIN Category ON Variant.category=Category.id " +
+            "WHERE Category.user=?;";
     public static final String VARIANT_UPDATE = "UPDATE Variant SET name=? WHERE id=?;";
     public static final String VARIANT_SELECT_BY_TASK = "SELECT Variant.* " +
             "FROM Variant JOIN TaskVariant ON Variant.id=TaskVariant.variant " +
