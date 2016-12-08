@@ -123,7 +123,6 @@ public class TaskDAOimpl implements TaskDAO {
         stmt.setInt(5, task.getUser());
         stmt.setObject(6, task.getLastUpdateTS());
         stmt.setInt(7, task.getId());
-        System.out.println(stmt.toString());
         stmt.execute();
 
         stmt.close();
