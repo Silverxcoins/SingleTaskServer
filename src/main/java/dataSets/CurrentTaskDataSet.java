@@ -13,8 +13,10 @@ public class CurrentTaskDataSet {
 
     public CurrentTaskDataSet(JsonNode json) {
         if (json.has("currentTask")) this.id = json.get("currentTask").getIntValue();
-        if (json.has("taskStart")) this.taskStart = Timestamp.valueOf(json.get("taskStart").getTextValue());
-        if (json.has("lastUpdate")) this.lastUpdate = Timestamp.valueOf(json.get("lastUpdate").getTextValue());
+        if (json.has("taskStart") && json.get("taskStart").getTextValue() != null)
+            this.taskStart = Timestamp.valueOf(json.get("taskStart").getTextValue());
+        if (json.has("lastUpdate") && json.get("lastUpdate").getTextValue() != null)
+            this.lastUpdate = Timestamp.valueOf(json.get("lastUpdate").getTextValue());
     }
 
     public CurrentTaskDataSet(ResultSet resultSet) throws SQLException {
