@@ -144,7 +144,8 @@ public class UserDAOimpl implements UserDAO {
             resultSet.close();
 
             if (clientCurrentTask.getLastUpdate() != null
-                    && clientCurrentTask.getLastUpdateTS().after(serverCurrentTask.getLastUpdateTS())) {
+                    && (serverCurrentTask.getLastUpdate() == null
+                    || clientCurrentTask.getLastUpdateTS().after(serverCurrentTask.getLastUpdateTS()))) {
                 stmt = connection.prepareStatement("UPDATE User SET currentTask=?,taskStart=?,lastUpdate=? WHERE id=?");
                 stmt.setObject(1, clientCurrentTask.getId());
                 stmt.setObject(2, clientCurrentTask.getTaskStart());
